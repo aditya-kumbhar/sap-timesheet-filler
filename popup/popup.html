@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAP Timesheet Filler</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-icon">⏱</span>
+      <span class="logo-text">SAP Timesheet Filler</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="week">This Week</button>
+      <button class="tab" data-tab="settings">Settings</button>
+    </div>
+  </header>
+
+  <!-- ── This Week Tab ───────────────────────────────────────────────────── -->
+  <div id="tab-week" class="tab-content active">
+    <div class="week-header">
+      <button id="btn-prev-week" class="btn-week-nav" title="Previous week">‹</button>
+      <div class="week-label-group">
+        <span id="week-label" class="week-label">Week of …</span>
+        <span id="week-badge" class="week-badge hidden">current</span>
+      </div>
+      <button id="btn-next-week" class="btn-week-nav" title="Next week" disabled>›</button>
+      <button id="btn-load-week-data" class="btn-secondary btn-sm">Load saved</button>
+    </div>
+
+    <div id="days-container">
+      <!-- Rendered by popup.js -->
+    </div>
+
+    <div class="action-row">
+      <button id="btn-fill-sap" class="btn-primary">Fill SAP ▶</button>
+    </div>
+
+    <div id="progress-area" class="progress-area hidden">
+      <div class="progress-header">Progress</div>
+      <div id="progress-log" class="progress-log"></div>
+    </div>
+
+    <div id="error-banner" class="error-banner hidden"></div>
+  </div>
+
+  <!-- ── Settings Tab ────────────────────────────────────────────────────── -->
+  <div id="tab-settings" class="tab-content hidden">
+
+    <section class="settings-section">
+      <h3>Known Projects</h3>
+      <p class="hint">Add SAP templates here for quick selection. The template name must match exactly what appears in SAP's "Select Template" menu.</p>
+      <div id="projects-list" class="projects-list">
+        <!-- Rendered by popup.js -->
+      </div>
+      <div class="add-project-form" id="add-project-form">
+        <input type="text" id="new-project-name" placeholder="Display name (e.g. My Project)" />
+        <input type="text" id="new-project-search" placeholder="SAP template name (e.g. C1 Daily Scrum)" />
+        <button id="btn-add-project" class="btn-primary btn-sm">Add</button>
+      </div>
+    </section>
+
+    <section class="settings-section">
+      <h3>Attendance Defaults</h3>
+      <p class="hint">Used for days with no previous week data.</p>
+      <div class="attendance-defaults-form">
+        <div class="form-row">
+          <label>Period 1</label>
+          <input type="time" id="default-period1-start" />
+          <span>–</span>
+          <input type="time" id="default-period1-end" />
+        </div>
+        <div class="form-row">
+          <label>Period 2</label>
+          <input type="time" id="default-period2-start" />
+          <span>–</span>
+          <input type="time" id="default-period2-end" />
+        </div>
+        <div class="form-row">
+          <label>Work place</label>
+          <select id="default-work-place">
+            <option value="Mobile working">Mobile working</option>
+            <option value="In office">In office</option>
+            <option value="Customer visit">Customer visit</option>
+          </select>
+        </div>
+      </div>
+      <button id="btn-save-settings" class="btn-primary btn-sm">Save Settings</button>
+      <div id="settings-saved-msg" class="saved-msg hidden">Saved.</div>
+    </section>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,695 @@
+/* SAP Timesheet Filler — Popup Styles */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sap-blue: #0070f2;
+  --sap-blue-dark: #0057c2;
+  --sap-gray: #6a6d70;
+  --sap-gray-light: #f2f2f2;
+  --sap-border: #d9d9d9;
+  --sap-danger: #bb0000;
+  --sap-success: #107e3e;
+  --sap-warning: #e9730c;
+  --text: #1d2d3e;
+  --text-muted: #6a6d70;
+  --radius: 4px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  background: #fff;
+  width: 460px;
+  min-height: 200px;
+  max-height: 580px;
+  overflow-y: auto;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+
+header {
+  background: var(--sap-blue);
+  color: #fff;
+  padding: 8px 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  opacity: 0.95;
+}
+
+.logo-icon { font-size: 16px; }
+
+.tabs {
+  display: flex;
+  gap: 0;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(255,255,255,0.75);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover { color: #fff; }
+
+.tab.active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+/* ── Tab Content ─────────────────────────────────────────────────────────── */
+
+.tab-content { padding: 10px 12px; }
+.tab-content.hidden { display: none; }
+
+/* ── Week Header ─────────────────────────────────────────────────────────── */
+
+.week-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.week-label-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.week-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.week-badge {
+  background: var(--sap-blue);
+  color: #fff;
+  border-radius: 9px;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.week-badge.hidden { display: none; }
+
+.btn-week-nav {
+  background: none;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 7px;
+  flex-shrink: 0;
+}
+
+.btn-week-nav:hover:not(:disabled) { border-color: var(--sap-blue); color: var(--sap-blue); }
+.btn-week-nav:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── Day Card ────────────────────────────────────────────────────────────── */
+
+.day-card {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.day-card.disabled { opacity: 0.5; }
+
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--sap-gray-light);
+  cursor: pointer;
+  user-select: none;
+}
+
+.day-header input[type="checkbox"] { cursor: pointer; }
+
+.day-name {
+  font-weight: 600;
+  font-size: 12px;
+  flex: 1;
+}
+
+.day-date {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.day-body { padding: 8px 10px; }
+.day-body.hidden { display: none; }
+
+/* ── Project Entry Rows ──────────────────────────────────────────────────── */
+
+.project-entries { margin-bottom: 6px; }
+
+.project-row {
+  display: grid;
+  grid-template-columns: 1fr 52px auto;
+  gap: 5px;
+  align-items: start;
+  margin-bottom: 5px;
+}
+
+.project-row select,
+.project-row input[type="text"],
+.project-row input[type="number"] {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 4px 6px;
+  width: 100%;
+  color: var(--text);
+  background: #fff;
+}
+
+.project-row select:focus,
+.project-row input:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.project-row-inner {
+  display: grid;
+  grid-template-columns: 1fr 52px;
+  gap: 5px;
+  align-items: start;
+}
+
+.project-select-wrapper {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 52px;
+  gap: 5px;
+  align-items: center;
+}
+
+.project-description {
+  grid-column: 1 / -1;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-family: var(--font);
+  padding: 4px 6px;
+  resize: vertical;
+  min-height: 40px;
+  width: 100%;
+  color: var(--text);
+}
+
+.project-description:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.project-row-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.project-top-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.project-top-row select,
+.project-top-row input[type="text"] {
+  flex: 1;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 4px 6px;
+  color: var(--text);
+  background: #fff;
+  min-width: 0;
+}
+
+.project-top-row input[type="number"] {
+  width: 52px;
+  flex-shrink: 0;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 4px 6px;
+  color: var(--text);
+  background: #fff;
+}
+
+.project-top-row select:focus,
+.project-top-row input:focus,
+.project-description:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.btn-remove-project {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+  line-height: 1;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.btn-remove-project:hover { color: var(--sap-danger); background: #fff0f0; }
+
+/* Hours input with "h" unit label */
+.hours-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.hours-wrapper input[type="number"] {
+  width: 46px;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 4px 4px;
+  color: var(--text);
+  background: #fff;
+  text-align: center;
+}
+
+.hours-wrapper input[type="number"]:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.hours-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* Advanced result index row (hidden by default) */
+.result-index-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 0 1px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.result-index-wrapper.hidden { display: none; }
+
+.result-index-wrapper input[type="number"] {
+  width: 42px;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 11px;
+  padding: 2px 4px;
+  color: var(--text);
+  background: #fff;
+  text-align: center;
+}
+
+.result-index-wrapper input:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+/* ⚙ advanced toggle button */
+.btn-advanced-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 3px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.btn-advanced-toggle:hover { opacity: 1; color: var(--sap-blue); }
+.btn-advanced-toggle.active { opacity: 1; color: var(--sap-blue); }
+
+.btn-add-project-row {
+  background: none;
+  border: 1px dashed var(--sap-border);
+  border-radius: var(--radius);
+  color: var(--sap-blue);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px 8px;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.btn-add-project-row:hover { background: #f0f6ff; border-color: var(--sap-blue); }
+
+/* ── Attendance Row ──────────────────────────────────────────────────────── */
+
+.attendance-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 4px 0;
+  cursor: pointer;
+  border-top: 1px solid var(--sap-border);
+  padding-top: 6px;
+}
+
+.attendance-summary:hover { color: var(--text); }
+
+.attendance-summary-text { flex: 1; }
+
+.btn-toggle-attendance {
+  background: none;
+  border: none;
+  color: var(--sap-blue);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 4px;
+}
+
+.attendance-detail {
+  border-top: 1px solid var(--sap-border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.attendance-detail.hidden { display: none; }
+
+.attendance-form-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+
+.attendance-form-row label {
+  color: var(--text-muted);
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.attendance-form-row input[type="time"] {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 3px 6px;
+  color: var(--text);
+  background: #fff;
+}
+
+.attendance-form-row input[type="time"]:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.workplace-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.workplace-btn {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.workplace-btn:hover { border-color: var(--sap-blue); color: var(--sap-blue); }
+.workplace-btn.active {
+  background: var(--sap-blue);
+  border-color: var(--sap-blue);
+  color: #fff;
+}
+
+/* ── Action Row ──────────────────────────────────────────────────────────── */
+
+.action-row {
+  margin: 10px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-row .btn-primary { margin-left: auto; }
+
+/* ── Progress ────────────────────────────────────────────────────────────── */
+
+.progress-area {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-area.hidden { display: none; }
+
+.progress-header {
+  background: var(--sap-gray-light);
+  border-bottom: 1px solid var(--sap-border);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+}
+
+.progress-log {
+  font-size: 11px;
+  font-family: 'SF Mono', 'Consolas', monospace;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 6px 8px;
+  line-height: 1.6;
+}
+
+.progress-log .log-success { color: var(--sap-success); }
+.progress-log .log-error   { color: var(--sap-danger); }
+.progress-log .log-info    { color: var(--text-muted); }
+
+/* ── Error Banner ────────────────────────────────────────────────────────── */
+
+.error-banner {
+  background: #fff0f0;
+  border: 1px solid #f5b8b8;
+  border-radius: var(--radius);
+  color: var(--sap-danger);
+  font-size: 12px;
+  margin-top: 6px;
+  padding: 8px 10px;
+}
+
+.error-banner.hidden { display: none; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  background: var(--sap-blue);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 16px;
+  transition: background 0.15s;
+}
+
+.btn-primary:hover { background: var(--sap-blue-dark); }
+.btn-primary:disabled { background: #a0c4f8; cursor: not-allowed; }
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px 10px;
+  transition: border-color 0.15s;
+}
+
+.btn-secondary:hover { border-color: var(--sap-blue); color: var(--sap-blue); }
+
+.btn-sm { font-size: 11px; padding: 4px 10px; }
+
+/* ── Settings ────────────────────────────────────────────────────────────── */
+
+.settings-section {
+  margin-bottom: 16px;
+}
+
+.settings-section h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.projects-list {
+  margin-bottom: 8px;
+}
+
+.project-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--sap-border);
+  font-size: 12px;
+}
+
+.project-list-item:last-child { border-bottom: none; }
+
+.project-list-name { font-weight: 600; flex: 1; }
+.project-list-search { color: var(--text-muted); font-family: monospace; font-size: 11px; }
+
+.btn-delete-project {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: var(--radius);
+}
+
+.btn-delete-project:hover { color: var(--sap-danger); background: #fff0f0; }
+
+.add-project-form {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.add-project-form input {
+  flex: 1;
+  min-width: 100px;
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 5px 8px;
+  color: var(--text);
+}
+
+.add-project-form input:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.attendance-defaults-form {
+  margin-bottom: 8px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.form-row label {
+  color: var(--text-muted);
+  width: 72px;
+  flex-shrink: 0;
+}
+
+.form-row input[type="time"],
+.form-row select {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  padding: 4px 6px;
+  color: var(--text);
+  background: #fff;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  outline: 2px solid var(--sap-blue);
+  outline-offset: -1px;
+  border-color: var(--sap-blue);
+}
+
+.saved-msg {
+  color: var(--sap-success);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.saved-msg.hidden { display: none; }
+
+.empty-state {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+  padding: 4px 0;
+}
