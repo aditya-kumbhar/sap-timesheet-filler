@@ -35,6 +35,16 @@
       return false;
     }
 
+    if (message.type === 'GET_TEMPLATES') {
+      if (!isInSAPAppFrame()) return false;
+      getTemplateNames().then(names => {
+        sendResponse({ templates: names });
+      }).catch(err => {
+        sendResponse({ templates: [], error: err.message });
+      });
+      return true; // Keep message channel open for async response
+    }
+
     if (message.type === 'FILL_SAP') {
       if (!isInSAPAppFrame()) return false; // Only run in the SAP app frame
       if (window.__sapFillerRunning) {
@@ -150,6 +160,36 @@
     // 8. Wait for return to week view
     await waitForWeekView();
     await sleep(2500); // Give SAP's router time to fully settle before next entry
+  }
+
+  async function getTemplateNames() {
+    // Click "Select Template" to open the menu, read template names, then close it
+    await clickSelectTemplate();
+
+    // Read template names from the menu
+    const names = await waitForCondition(() => {
+      const candidates = document.querySelectorAll(
+        '.sapMPopover li, .sapMMenu li, .sapMLIB, ' +
+        '[role="menuitem"], [role="listitem"], .sapMSLI, .sapUiMnuItm'
+      );
+      const found = [];
+      for (const el of candidates) {
+        const text = el.textContent.trim();
+        // Skip "Add", "Delete", empty, and generic menu items
+        if (text && text !== 'Add' && text !== 'Delete' && text !== 'Select Template') {
+          // Template items may contain submenu text; get only the direct text
+          // by checking for items that have a meaningful name
+          if (!found.includes(text)) found.push(text);
+        }
+      }
+      return found.length > 0 ? found : null;
+    }, 6000).catch(() => { throw new Error('No templates found in menu'); });
+
+    // Close the menu by pressing Escape
+    pressEscape();
+    await sleep(500);
+
+    return names;
   }
 
   async function clickSelectTemplate() {

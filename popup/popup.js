@@ -442,6 +442,7 @@
     document.getElementById('btn-load-week-data').addEventListener('click', loadWeekData);
     document.getElementById('btn-fill-sap').addEventListener('click', fillSAP);
     document.getElementById('btn-add-project').addEventListener('click', addProject);
+    document.getElementById('btn-import-templates').addEventListener('click', importTemplatesFromSAP);
     document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
   }
 
@@ -655,6 +656,51 @@
   function renderSettingsTab() {
     renderProjectsList();
     renderAttendanceDefaults();
+  }
+
+  async function importTemplatesFromSAP() {
+    const btn = document.getElementById('btn-import-templates');
+    const status = document.getElementById('import-status');
+    btn.disabled = true;
+    btn.textContent = 'Importing…';
+    status.classList.add('hidden');
+
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab) throw new Error('No active tab found');
+
+      const response = await chrome.tabs.sendMessage(tab.id, { type: 'GET_TEMPLATES' });
+      if (!response || response.error) {
+        throw new Error(response?.error || 'No response from SAP page');
+      }
+
+      const templates = response.templates || [];
+      if (!templates.length) throw new Error('No templates found');
+
+      // Add templates that don't already exist
+      let added = 0;
+      for (const name of templates) {
+        const exists = state.projects.some(p => p.templateName === name);
+        if (!exists) {
+          state.projects.push({ id: generateId(), displayName: name, templateName: name });
+          added++;
+        }
+      }
+
+      await chrome.storage.sync.set({ projects: state.projects });
+      renderProjectsList();
+
+      status.textContent = added > 0
+        ? `Imported ${added} new template(s). ${templates.length - added} already existed.`
+        : `All ${templates.length} templates already imported.`;
+      status.classList.remove('hidden');
+    } catch (err) {
+      status.textContent = `Import failed: ${err.message}. Make sure you're on the SAP Time Recording page.`;
+      status.classList.remove('hidden');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Import templates from SAP';
+    }
   }
 
   function renderProjectsList() {
