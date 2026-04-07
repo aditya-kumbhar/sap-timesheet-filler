@@ -37,7 +37,7 @@ You only need to setup a template for each project that you need to book time ag
 
 ### 1. Import Templates
 
-1. Navigate to your SAP Time Recording page
+1. Navigate to your SAP Time Recording page with the weekly calendar view (it's recommended to refresh the page once).
 2. Click the extension icon to open the popup
 3. Go to the **Settings** tab
 4. Click **Import templates from SAP** — this reads your existing SAP templates automatically
