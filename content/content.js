@@ -141,17 +141,21 @@
     // 4. Set date
     await setDateField(date);
 
-    // 5. Set Duration
+    // 5. Set Duration via page-world bridge (more reliable for overwriting template values)
     const durationInput = findInputByLabel('Duration') ||
       document.querySelector('input[id*="durationInputField"]');
     if (!durationInput) throw new Error('Duration field not found');
-    setUI5InputValue(durationInput, String(entry.hours));
+    document.dispatchEvent(new CustomEvent('__sapFiller_setValue', {
+      detail: { id: durationInput.id, value: String(entry.hours) }
+    }));
     await sleep(300);
 
-    // 6. Set Description
+    // 6. Set Description via page-world bridge (template pre-fills this, must overwrite)
     const descInput = findDescriptionField();
     if (!descInput) throw new Error('Description field not found');
-    setUI5InputValue(descInput, entry.description);
+    document.dispatchEvent(new CustomEvent('__sapFiller_setValue', {
+      detail: { id: descInput.id, value: entry.description }
+    }));
     await sleep(300);
 
     // 7. Save
@@ -273,8 +277,17 @@
       }
       return null;
     }, 6000).catch(() => { throw new Error('Attendance tab not found after 6s'); });
-    fireUI5Press(attTab.id);
-    await sleep(800);
+
+    // Use a dedicated event to select the tab by clicking the UI5 item
+    document.dispatchEvent(new CustomEvent('__sapFiller_selectSegBtnItem', {
+      detail: { id: attTab.id }
+    }));
+    await sleep(1000);
+
+    // Verify the tab switched — time fields should now be visible
+    await waitForCondition(() => {
+      return document.querySelector('input[id*="startInputField-inner"]');
+    }, 6000).catch(() => { throw new Error('Attendance fields did not appear after tab switch'); });
 
     // 4. Set date
     const dateInput = document.querySelector('input[id*="picker"][id$="-inner"]');
@@ -625,16 +638,18 @@
   }
 
   async function setWorkPlace(workPlace) {
-    // Work place is a segmented button (3 options: Mobile working / In office / Customer visit)
-    const buttons = document.querySelectorAll('.sapMSegBBtn, [class*="SegB"] button, [role="radio"]');
-    for (const btn of buttons) {
-      if (btn.textContent.trim() === workPlace) {
-        const isSelected = btn.getAttribute('aria-pressed') === 'true' ||
-          btn.classList.contains('sapMSegBtnLastFocused') ||
-          btn.getAttribute('aria-checked') === 'true';
+    // Work place is a SegmentedButton with <li role="option"> items.
+    // Use jQuery tap via the page-world bridge (same approach as tab switching).
+    const items = document.querySelectorAll('.sapMSegBBtn[role="option"]');
+    for (const item of items) {
+      if (item.textContent.trim() === workPlace) {
+        const isSelected = item.getAttribute('aria-selected') === 'true' ||
+          item.classList.contains('sapMSegBBtnSel');
         if (!isSelected) {
-          btn.click();
-          await sleep(200);
+          document.dispatchEvent(new CustomEvent('__sapFiller_selectSegBtnItem', {
+            detail: { id: item.id }
+          }));
+          await sleep(300);
         }
         return;
       }

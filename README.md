@@ -1,6 +1,6 @@
 # SAP Timesheet Filler
 
-A Chrome extension that automates SAP Fiori timesheet entry using pre-configured templates.
+A Chrome extension that automates SAP timesheet entry using pre-configured templates.
 
 ## Features
 
@@ -14,7 +14,7 @@ A Chrome extension that automates SAP Fiori timesheet entry using pre-configured
 ## Prerequisites
 
 - Google Chrome browser
-- Access to SAP Fiori Time and Performance Recording (on `*.hana.ondemand.com`)
+- Access to SAP Time and Performance Recording (on `*.hana.ondemand.com`)
 - SAP templates must already be created in your SAP account (Select Template menu)
 
 <!-- Screenshot: SAP week view showing the "Select Template" dropdown with templates listed -->

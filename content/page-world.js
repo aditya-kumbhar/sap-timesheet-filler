@@ -55,6 +55,16 @@ document.addEventListener('__sapFiller_firePress', function (e) {
   if (el2) el2.click();
 });
 
+document.addEventListener('__sapFiller_selectSegBtnItem', function (e) {
+  // Trigger a jQuery tap on the SegmentedButton item — this is the most
+  // reliable way to activate SAP's internal event handling for both
+  // tab switches (Project/Attendance) and workplace selection.
+  var el = document.getElementById(e.detail.id);
+  if (el && typeof jQuery !== 'undefined') {
+    jQuery(el).trigger('tap');
+  }
+});
+
 document.addEventListener('__sapFiller_setValue', function (e) {
   try {
     var controlId = e.detail.id.replace(/-inner$/, '').replace(/-content$/, '');

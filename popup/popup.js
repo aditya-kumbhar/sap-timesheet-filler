@@ -33,6 +33,7 @@
     applyWeekOffset(0);    // Renders current week
     renderSettingsTab();
     bindActions();
+    restoreProgress();
   });
 
   async function loadStorage() {
@@ -619,6 +620,33 @@
   function showProgressArea() {
     document.getElementById('progress-area').classList.remove('hidden');
     document.getElementById('progress-log').innerHTML = '';
+  }
+
+  async function restoreProgress() {
+    const data = await new Promise(r =>
+      chrome.storage.local.get(['progress', 'automationDone'], r)
+    );
+    const entries = data.progress || [];
+    if (!entries.length) return;
+
+    showProgressArea();
+    renderProgressLog(entries);
+
+    if (!data.automationDone) {
+      // Automation still running — resume polling
+      document.getElementById('btn-fill-sap').disabled = true;
+      pollInterval = setInterval(async () => {
+        const d = await new Promise(r =>
+          chrome.storage.local.get(['progress', 'automationDone', 'automationResult'], r)
+        );
+        renderProgressLog(d.progress || []);
+        if (d.automationDone) {
+          clearInterval(pollInterval);
+          pollInterval = null;
+          document.getElementById('btn-fill-sap').disabled = false;
+        }
+      }, 500);
+    }
   }
 
   // ─── Persist Week Data ─────────────────────────────────────────────────────
