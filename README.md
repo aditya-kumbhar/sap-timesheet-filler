@@ -79,7 +79,9 @@ Click **Save Settings** when done.
 <!-- Screenshot: This Week tab with project entries filled in for a day -->
 <img width="459" height="605" alt="image" src="https://github.com/user-attachments/assets/5c6c48d1-6a78-4f27-a8fe-a99112b6474c" />
 
+
 Click on the small button below to configure `Time Periods` and `Work Place` for a specific day; the defaults from the settings tab are auto-populated.
+
 <img width="458" height="460" alt="image" src="https://github.com/user-attachments/assets/1f7a7919-1d78-4a75-89b7-91e646181dbc" />
 
 
