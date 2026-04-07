@@ -17,6 +17,9 @@ A Chrome extension that automates SAP timesheet entry using pre-configured templ
 - Access to SAP Time and Performance Recording (on `*.hana.ondemand.com`)
 - SAP templates must already be created in your SAP account (Select Template menu)
 
+Note that the project work description and work hours for the SAP templates will be overridden with what you specify in the extension. 
+You only need to setup a template for each project that you need to book time against and you can customize the work hours in the extension.
+
 <!-- Screenshot: SAP week view showing the "Select Template" dropdown with templates listed -->
 <img width="603" height="185" alt="image" src="https://github.com/user-attachments/assets/54c76955-9ef1-4059-b3c9-afdd47354506" />
 
