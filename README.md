@@ -18,13 +18,14 @@ A Chrome extension that automates SAP timesheet entry using pre-configured templ
 - SAP templates must already be created in your SAP account (Select Template menu)
 
 <!-- Screenshot: SAP week view showing the "Select Template" dropdown with templates listed -->
+<img width="603" height="185" alt="image" src="https://github.com/user-attachments/assets/54c76955-9ef1-4059-b3c9-afdd47354506" />
 
 ## Installation
 
 1. Clone or download this repository
 2. Open Chrome and navigate to `chrome://extensions`
 3. Enable **Developer mode** (toggle in the top-right corner)
-4. Click **Load unpacked** and select the `auto-sap` folder
+4. Click **Load unpacked** and select the `sap-timesheet-filler` folder
 5. The extension icon should appear in your Chrome toolbar
 
 <!-- Screenshot: chrome://extensions page with Developer mode enabled and Load unpacked button -->
@@ -39,6 +40,7 @@ A Chrome extension that automates SAP timesheet entry using pre-configured templ
 4. Click **Import templates from SAP** — this reads your existing SAP templates automatically
 
 <!-- Screenshot: Settings tab showing the Import button and imported templates -->
+<img width="460" height="466" alt="image" src="https://github.com/user-attachments/assets/85709006-92eb-48ca-8b20-567736abbb51" />
 
 Alternatively, add templates manually:
 - **Display name**: A friendly name shown in the extension dropdown
@@ -54,6 +56,8 @@ In the Settings tab, set your default attendance times:
 Click **Save Settings** when done.
 
 <!-- Screenshot: Attendance defaults section in Settings -->
+<img width="460" height="466" alt="image" src="https://github.com/user-attachments/assets/6c1d705c-5539-491e-a70b-5608f08cf1c6" />
+
 
 ## Usage
 
@@ -70,6 +74,11 @@ Click **Save Settings** when done.
 6. Click **Fill SAP**
 
 <!-- Screenshot: This Week tab with project entries filled in for a day -->
+<img width="459" height="605" alt="image" src="https://github.com/user-attachments/assets/5c6c48d1-6a78-4f27-a8fe-a99112b6474c" />
+
+Click on the small button below to configure `Time Periods` and `Work Place` for a specific day; the defaults from the settings tab are auto-populated.
+<img width="458" height="460" alt="image" src="https://github.com/user-attachments/assets/1f7a7919-1d78-4a75-89b7-91e646181dbc" />
+
 
 The extension will:
 - Click "Select Template" for each project entry
@@ -85,6 +94,7 @@ A progress log appears at the bottom showing each entry's status:
 - `✗` — Entry failed (with error message)
 
 <!-- Screenshot: Progress log showing successful and failed entries -->
+<img width="461" height="601" alt="image" src="https://github.com/user-attachments/assets/f003255e-8de3-4d97-8146-a74597597c12" />
 
 ### Past Weeks
 
@@ -99,7 +109,7 @@ Use the `‹` / `›` arrows next to the week label to navigate to past weeks. T
 
 ### "Extension not active on this page"
 
-- Make sure you're on the SAP Time Recording page (`*.hana.ondemand.com`)
+- Make sure you're on the SAP Time Recording page with the weekly view (does not have to be current week). (`*.hana.ondemand.com`)
 - Refresh the SAP page (Cmd+R / Ctrl+R)
 - Reload the extension at `chrome://extensions`
 
