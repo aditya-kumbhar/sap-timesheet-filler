@@ -11,6 +11,8 @@ A Chrome extension that automates SAP timesheet entry using pre-configured templ
 - Auto-save drafts per week
 - Import templates directly from SAP
 
+_**Note that the extension does not auto-release the week, giving you the opportunity to review/ make any corrections if needed.**_
+
 ## Prerequisites
 
 - Google Chrome browser
@@ -52,8 +54,8 @@ Alternatively, add templates manually:
 ### 2. Configure Attendance Defaults
 
 In the Settings tab, set your default attendance times:
-- **Period 1**: Start and end time (e.g., 08:30 – 12:30)
-- **Period 2**: Start and end time (e.g., 13:00 – 17:00)
+- **Period 1**: Start and end time (e.g., 08:30 AM – 12:30 PM)
+- **Period 2**: Start and end time (e.g., 1:00 PM – 5:00 PM)
 - **Work place**: Mobile working / In office / Customer visit
 
 Click **Save Settings** when done.
