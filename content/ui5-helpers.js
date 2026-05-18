@@ -195,6 +195,18 @@ function findButtonByText(text, root = document) {
 }
 
 /**
+ * Returns true if the element is rendered and visible (non-zero box, not display:none).
+ * @param {Element} el
+ */
+function isElementVisible(el) {
+  if (!el || !el.getBoundingClientRect) return false;
+  const rect = el.getBoundingClientRect();
+  if (rect.width === 0 && rect.height === 0) return false;
+  const style = window.getComputedStyle(el);
+  return style.display !== 'none' && style.visibility !== 'hidden';
+}
+
+/**
  * Simulate pressing the Escape key on the document.
  */
 function pressEscape() {

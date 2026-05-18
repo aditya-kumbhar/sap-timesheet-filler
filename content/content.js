@@ -269,25 +269,43 @@
     // 2. Wait for the new entry form
     await waitForNewEntryForm();
 
-    // 3. Switch to Attendance tab via the SegmentedButton
-    const attTab = await waitForCondition(() => {
-      const btns = document.querySelectorAll('.sapMSegBBtn');
-      for (const btn of btns) {
-        if (btn.textContent.trim().includes('Attendance')) return btn;
+    // 3. Switch to Attendance tab — but skip if it's already the active tab
+    // (SAP sometimes opens the form with the last-used tab pre-selected).
+    const attendanceFieldVisible = () => {
+      const inp = document.querySelector('input[id*="startInputField-inner"]');
+      return inp && isElementVisible(inp);
+    };
+
+    if (!attendanceFieldVisible()) {
+      const attTab = await waitForCondition(() => {
+        // Prefer a visible SegBBtn — stale/hidden forms from previous entries
+        // may still be in the DOM and we don't want to target those.
+        const btns = document.querySelectorAll('.sapMSegBBtn');
+        let fallback = null;
+        for (const btn of btns) {
+          if (!btn.textContent.trim().includes('Attendance')) continue;
+          if (isElementVisible(btn)) return btn;
+          fallback = fallback || btn;
+        }
+        return fallback;
+      }, 12000).catch(() => { throw new Error('Attendance tab not found after 12s'); });
+
+      // Try the UI5 tap bridge first
+      document.dispatchEvent(new CustomEvent('__sapFiller_selectSegBtnItem', {
+        detail: { id: attTab.id }
+      }));
+      await sleep(1000);
+
+      // If the tab didn't actually switch, fall back to a direct DOM click and retry.
+      if (!attendanceFieldVisible()) {
+        attTab.click();
+        await sleep(800);
       }
-      return null;
-    }, 6000).catch(() => { throw new Error('Attendance tab not found after 6s'); });
 
-    // Use a dedicated event to select the tab by clicking the UI5 item
-    document.dispatchEvent(new CustomEvent('__sapFiller_selectSegBtnItem', {
-      detail: { id: attTab.id }
-    }));
-    await sleep(1000);
-
-    // Verify the tab switched — time fields should now be visible
-    await waitForCondition(() => {
-      return document.querySelector('input[id*="startInputField-inner"]');
-    }, 6000).catch(() => { throw new Error('Attendance fields did not appear after tab switch'); });
+      // Verify the tab switched — time fields should now be visible
+      await waitForCondition(attendanceFieldVisible, 8000)
+        .catch(() => { throw new Error('Attendance fields did not appear after tab switch'); });
+    }
 
     // 4. Set date
     const dateInput = document.querySelector('input[id*="picker"][id$="-inner"]');

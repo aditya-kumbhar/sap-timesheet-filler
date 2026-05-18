@@ -146,19 +146,15 @@
     const mondayIso = toIso(getMondayForOffset(newOffset));
     const savedDraft = state.weekHistory[mondayIso];
     if (savedDraft) {
-      applyHistoryToCurrentWeek(savedDraft);
+      applyHistoryToCurrentWeek(savedDraft, mondayIso);
     }
 
     renderDaysContainer();
     hideError();
 
-    // Update "Load saved" button label (mondayIso already declared above)
-    const hasHistory = !!state.weekHistory[mondayIso];
-    const loadBtn = document.getElementById('btn-load-week-data');
-    loadBtn.textContent = hasHistory ? 'Load saved ✓' : 'Load saved';
-    loadBtn.title = hasHistory
-      ? `Saved data found for week of ${formatDisplayDate(mondayIso)} — click to load`
-      : 'No saved data for this week yet';
+    // Disable "Load previous week" if at the far edge of history.
+    document.getElementById('btn-load-week-data').disabled =
+      state.weekOffset <= -MAX_WEEKS_BACK;
   }
 
   // ─── Render Days ────────────────────────────────────────────────────────────
@@ -447,42 +443,75 @@
     document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
   }
 
-  // ─── Load Saved Week Data ──────────────────────────────────────────────────
+  // ─── Load Previous Week ────────────────────────────────────────────────────
 
+  /** A saved week is "meaningful" if at least one of its days has project entries. */
+  function weekHasEntries(week) {
+    if (!week) return false;
+    return Object.values(week).some(d => d && Array.isArray(d.projectEntries) && d.projectEntries.length > 0);
+  }
+
+  /**
+   * Copy the most recent prior week's entries into the displayed week.
+   * Walks back week-by-week from the displayed Monday until it finds a saved
+   * week with at least one project entry; falls back to scanning all stored
+   * keys so older history is still reachable beyond MAX_WEEKS_BACK.
+   */
   function loadWeekData() {
-    const mondayIso = toIso(getMondayForOffset(state.weekOffset));
-    const saved = state.weekHistory[mondayIso];
+    const displayedMondayIso = toIso(getMondayForOffset(state.weekOffset));
 
-    if (!saved) {
-      // No exact match — if viewing current week, try loading the previous week's data
-      // (same behavior as "Load Last Week" was: carry forward from the week before)
-      if (state.weekOffset === 0) {
-        const prevMondayIso = toIso(getMondayForOffset(-1));
-        const prevSaved = state.weekHistory[prevMondayIso];
-        if (prevSaved) {
-          applyHistoryToCurrentWeek(prevSaved);
-          showError(`No data for this week. Loaded previous week's entries as a starting point.`);
-          return;
-        }
+    let sourceMondayIso = null;
+    for (let back = 1; back <= MAX_WEEKS_BACK; back++) {
+      const candidate = toIso(getMondayForOffset(state.weekOffset - back));
+      if (weekHasEntries(state.weekHistory[candidate])) {
+        sourceMondayIso = candidate;
+        break;
       }
-      showError(`No saved data found for the week of ${formatDisplayDate(mondayIso)}.`);
+    }
+
+    if (!sourceMondayIso) {
+      // Fallback: scan all stored mondays earlier than the displayed week.
+      const earlierMondays = Object.keys(state.weekHistory)
+        .filter(k => k < displayedMondayIso && weekHasEntries(state.weekHistory[k]))
+        .sort();
+      if (earlierMondays.length) {
+        sourceMondayIso = earlierMondays[earlierMondays.length - 1];
+      }
+    }
+
+    if (!sourceMondayIso) {
+      showError(`No previous week with saved entries was found.`);
       return;
     }
 
-    applyHistoryToCurrentWeek(saved);
+    applyHistoryToCurrentWeek(state.weekHistory[sourceMondayIso], sourceMondayIso);
+    saveDraft();
     hideError();
   }
 
   /**
-   * Apply a saved week's day entries onto the current week form.
-   * The saved data is an object keyed by ISO date; we map by day-of-week index
-   * so that Mon data goes to Mon, Tue to Tue, etc. regardless of actual dates.
+   * Apply a saved week's day entries onto the rendered week form.
+   * If the saved week's Monday differs from the rendered week's Monday,
+   * we map by day-of-week (Mon→Mon, Tue→Tue, …) so previous-week data
+   * lands on the matching weekday in the current week.
    */
-  function applyHistoryToCurrentWeek(savedWeek) {
-    // Match by actual date (day.date → savedWeek[day.date]), not by index.
-    // This ensures each day's data goes to the correct day regardless of gaps.
-    state.currentWeek.forEach(day => {
-      const savedDay = savedWeek[day.date];
+  function applyHistoryToCurrentWeek(savedWeek, savedMondayIso) {
+    const currentMondayIso = state.currentWeek[0].date;
+    const mapByDayOfWeek = savedMondayIso && savedMondayIso !== currentMondayIso;
+
+    let savedByDow = null;
+    if (mapByDayOfWeek) {
+      savedByDow = {};
+      Object.keys(savedWeek).forEach(dateStr => {
+        const d = new Date(dateStr + 'T00:00:00');
+        const jsDow = d.getDay();           // 0=Sun
+        const idx = jsDow === 0 ? 6 : jsDow - 1; // 0=Mon … 6=Sun
+        savedByDow[idx] = savedWeek[dateStr];
+      });
+    }
+
+    state.currentWeek.forEach((day, idx) => {
+      const savedDay = mapByDayOfWeek ? savedByDow[idx] : savedWeek[day.date];
       if (!savedDay) return;
 
       day.enabled = savedDay.enabled !== undefined ? savedDay.enabled : day.enabled;
@@ -511,10 +540,6 @@
 
     state.weekHistory[mondayIso] = weekEntry;
     await chrome.storage.local.set({ weekHistory: state.weekHistory });
-
-    // Update "Load saved" button
-    document.getElementById('btn-load-week-data').textContent = 'Load saved ✓';
-
   }
 
   // ─── Fill SAP ──────────────────────────────────────────────────────────────
