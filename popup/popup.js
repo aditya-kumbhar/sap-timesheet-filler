@@ -228,7 +228,7 @@
     addProjectBtn.className = 'btn-add-project-row';
     addProjectBtn.textContent = '+ Add project';
     addProjectBtn.addEventListener('click', () => {
-      const newEntry = { templateName: '', hours: 8, description: '' };
+      const newEntry = { templateName: '', hours: 8, ticketNo: '', description: '' };
       day.projectEntries.push(newEntry);
       projectEntries.appendChild(buildProjectRow(day, newEntry, day.projectEntries.length - 1));
     });
@@ -313,6 +313,15 @@
     topRow.appendChild(customInput);
     topRow.appendChild(hoursWrapper);
     layout.appendChild(topRow);
+
+    // Ticket number
+    const ticketInput = document.createElement('input');
+    ticketInput.type = 'text';
+    ticketInput.className = 'project-ticket';
+    ticketInput.placeholder = 'Ticket No. (e.g. CRPSFX-1263)';
+    ticketInput.value = entry.ticketNo || '';
+    ticketInput.addEventListener('input', () => { entry.ticketNo = ticketInput.value; });
+    layout.appendChild(ticketInput);
 
     // Description
     const descInput = document.createElement('textarea');
@@ -573,6 +582,7 @@
         projectEntries: day.projectEntries.map(e => ({
           templateName: e.templateName,
           hours: String(e.hours),
+          ticketNo: e.ticketNo || '',
           description: e.description || ''
         })),
         attendance: day.attendance || null
@@ -687,6 +697,7 @@
           projectId: state.projects.find(p => p.templateName === e.templateName)?.id || null,
           templateName: e.templateName,
           hours: e.hours,
+          ticketNo: e.ticketNo || '',
           description: e.description
         })),
         attendance: day.attendance

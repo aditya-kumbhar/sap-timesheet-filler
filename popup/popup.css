@@ -275,8 +275,20 @@ header {
   background: #fff;
 }
 
+.project-ticket {
+  border: 1px solid var(--sap-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-family: var(--font);
+  padding: 4px 6px;
+  width: 100%;
+  color: var(--text);
+  background: #fff;
+}
+
 .project-top-row select:focus,
 .project-top-row input:focus,
+.project-ticket:focus,
 .project-description:focus {
   outline: 2px solid var(--sap-blue);
   outline-offset: -1px;

@@ -150,7 +150,19 @@
     }));
     await sleep(300);
 
-    // 6. Set Description via page-world bridge (template pre-fills this, must overwrite)
+    // 6. Set Ticket No. (optional field — only overwrite when a value was provided).
+    // This field has no <label>; "Ticket No." is its placeholder, so match on that.
+    if (entry.ticketNo) {
+      const ticketInput = findTicketField();
+      if (ticketInput) {
+        document.dispatchEvent(new CustomEvent('__sapFiller_setValue', {
+          detail: { id: ticketInput.id, value: entry.ticketNo }
+        }));
+        await sleep(300);
+      }
+    }
+
+    // 7. Set Description via page-world bridge (template pre-fills this, must overwrite)
     const descInput = findDescriptionField();
     if (!descInput) throw new Error('Description field not found');
     document.dispatchEvent(new CustomEvent('__sapFiller_setValue', {
@@ -158,23 +170,44 @@
     }));
     await sleep(300);
 
-    // 7. Save
+    // 8. Save
     await clickSave();
 
-    // 8. Wait for return to week view
+    // 9. Wait for return to week view
     await waitForWeekView();
     await sleep(2500); // Give SAP's router time to fully settle before next entry
+  }
+
+  /**
+   * Return the currently-open template menu container (popover / action sheet /
+   * unified menu). Template items live inside this container; scoping queries to
+   * it avoids picking up timesheet entries from the week view behind it.
+   * Returns the topmost (last-rendered) visible container, or null.
+   */
+  function getOpenTemplateMenu() {
+    const containers = document.querySelectorAll(
+      '.sapMPopover, .sapMActionSheet, .sapMMenu, .sapUiMnu'
+    );
+    let visible = null;
+    for (const c of containers) {
+      if (isElementVisible(c)) visible = c; // later in DOM = topmost overlay
+    }
+    return visible;
   }
 
   async function getTemplateNames() {
     // Click "Select Template" to open the menu, read template names, then close it
     await clickSelectTemplate();
 
-    // Read template names from the menu
+    // Read template names from the menu. Crucially, scope the item query to the
+    // open menu/popover container — querying the whole document would also match
+    // the filled timesheet entry cards rendered in the week view behind the
+    // popover (e.g. ".sapMSLI", "[role=listitem]"), which are NOT templates.
     const names = await waitForCondition(() => {
-      const candidates = document.querySelectorAll(
-        '.sapMPopover li, .sapMMenu li, .sapMLIB, ' +
-        '[role="menuitem"], [role="listitem"], .sapMSLI, .sapUiMnuItm'
+      const menu = getOpenTemplateMenu();
+      if (!menu) return null;
+      const candidates = menu.querySelectorAll(
+        'li, [role="menuitem"], [role="listitem"], .sapMSLI, .sapMLIB, .sapUiMnuItm'
       );
       const found = [];
       for (const el of candidates) {
@@ -591,6 +624,21 @@
   }
 
   // selectProject, findProjectInput, findValueHelpButton removed — replaced by template-based flow
+
+  function findTicketField() {
+    // The Ticket No. field is a plain sap.m.Input with no associated <label> —
+    // its caption is rendered as the input's placeholder. Match on that first,
+    // then fall back to label/aria lookup in case the markup differs.
+    const byPlaceholder = Array.from(document.querySelectorAll('input[placeholder]'))
+      .find(inp => {
+        const ph = inp.getAttribute('placeholder').trim().toLowerCase();
+        return (ph === 'ticket no.' || ph === 'ticket no' || ph === 'ticket number')
+          && isElementVisible(inp);
+      });
+    if (byPlaceholder) return byPlaceholder;
+
+    return findInputByLabel('Ticket No.') || findInputByLabel('Ticket No');
+  }
 
   function findDescriptionField() {
     // Description is a textarea or multi-line input
